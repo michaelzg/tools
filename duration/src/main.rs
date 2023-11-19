@@ -38,8 +38,11 @@ fn parse_time(time_str: &str) -> Result<(u32, u32, bool), String> {
 }
 
 fn calculate_duration(start_time: &str, end_time: &str) -> Result<String, String> {
-    let (start_hours, start_minutes, start_is_pm) = parse_time(start_time)?;
-    let (end_hours, end_minutes, end_is_pm) = parse_time(end_time)?;
+    let start_time_upper = start_time.to_uppercase();
+    let end_time_upper = end_time.to_uppercase();
+
+    let (start_hours, start_minutes, start_is_pm) = parse_time(&start_time_upper)?;
+    let (end_hours, end_minutes, end_is_pm) = parse_time(&end_time_upper)?;
 
     let start_total_minutes = if start_hours == 12 {
         start_minutes
@@ -127,6 +130,14 @@ mod tests {
     fn test_calculate_duration_pm_to_am() {
         assert_eq!(
             calculate_duration("8:30 PM", "5:15 AM"),
+            Ok("8 hours 45 minutes".to_string())
+        );
+    }
+
+    #[test]
+    fn test_calculate_duration_lowercase() {
+        assert_eq!(
+            calculate_duration("8:30 pm", "5:15 am"),
             Ok("8 hours 45 minutes".to_string())
         );
     }
